@@ -1,4 +1,4 @@
-"""mik-gingos: a one-file Flask app styled in the Swiss (International) style.
+"""mik-gingos: a one-file Flask app styled in a Swiss + brutalist mix.
 
 Install:          pip install flask
 Run the app:      python3 main.py         then open http://127.0.0.1:5000
@@ -25,180 +25,195 @@ PAGE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MIK-GINGOS</title>
 <style>
+  /* Swiss: 12-column grid, Helvetica, flush-left type, red accent.
+     Brutalism: thick black borders, hard shadows, raw monospace, exposed structure. */
   :root {
-    --ink: #111;
-    --paper: #fff;
-    --red: #e30613;
-    --rule: #111;
-    --muted: #6b6b6b;
+    --ink: #000;
+    --paper: #f2f0eb;
+    --white: #fff;
+    --red: #ff2a00;
+    --line: 4px;
     --unit: 8px;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 16px; }
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    line-height: 1.35;
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--sans);
+    line-height: 1.3;
+  }
+  .page {
+    max-width: 1280px;
+    margin: calc(var(--unit) * 3) auto;
+    border: var(--line) solid var(--ink);
+    background: var(--white);
   }
   .grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: calc(var(--unit) * 3);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 calc(var(--unit) * 5);
   }
-  header {
-    border-bottom: 2px solid var(--rule);
-    padding: calc(var(--unit) * 3) 0;
+  .cell { border-right: var(--line) solid var(--ink); padding: calc(var(--unit) * 3); }
+  .cell:last-child { border-right: 0; }
+  .row { border-bottom: var(--line) solid var(--ink); }
+  .mono {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
-  header .mark {
-    grid-column: 1 / 2;
-    width: calc(var(--unit) * 4);
-    height: calc(var(--unit) * 4);
+
+  /* header */
+  .brand {
+    grid-column: span 3;
     background: var(--red);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
   }
-  header nav {
-    grid-column: 7 / 13;
+  .meta { grid-column: span 3; }
+  nav.cell { grid-column: span 6; display: flex; padding: 0; }
+  nav a {
+    flex: 1;
     display: flex;
-    gap: calc(var(--unit) * 4);
     align-items: center;
-    font-size: 0.875rem;
+    justify-content: center;
+    padding: calc(var(--unit) * 3);
+    border-right: var(--line) solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
-  header nav a { color: var(--ink); text-decoration: none; }
-  header nav a:hover { color: var(--red); }
+  nav a:last-child { border-right: 0; }
+  nav a:hover { background: var(--ink); color: var(--white); }
 
-  .hero { padding: calc(var(--unit) * 12) 0 calc(var(--unit) * 10); }
-  .hero .index {
-    grid-column: 1 / 3;
-    font-size: 0.875rem;
+  /* hero */
+  .index {
+    grid-column: span 2;
+    font-family: var(--mono);
+    font-size: 3rem;
     font-weight: 700;
     color: var(--red);
-    padding-top: calc(var(--unit) * 2);
   }
   .hero h1 {
-    grid-column: 3 / 13;
-    font-size: clamp(3rem, 11vw, 9rem);
+    grid-column: span 10;
+    font-size: clamp(3.5rem, 13vw, 11rem);
     font-weight: 700;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
+    line-height: 0.82;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+    padding-top: calc(var(--unit) * 6);
+    padding-bottom: calc(var(--unit) * 4);
+    word-break: break-word;
   }
   .hero h1 span { color: var(--red); }
 
-  section { border-top: 1px solid var(--rule); padding: calc(var(--unit) * 6) 0; }
-  section .label {
-    grid-column: 1 / 4;
-    font-size: 0.875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  section .label b { color: var(--red); margin-right: var(--unit); }
-  section .body { grid-column: 4 / 11; font-size: 1.5rem; max-width: 34ch; }
+  /* sections */
+  .label { grid-column: span 3; display: flex; flex-direction: column; gap: var(--unit); }
+  .label b { font-family: var(--mono); font-size: 2rem; color: var(--red); }
+  .label strong { font-size: 1.5rem; text-transform: uppercase; letter-spacing: -0.02em; }
+  .body { grid-column: span 9; font-size: clamp(1.25rem, 2.4vw, 2rem); font-weight: 500; }
+  .body p { max-width: 30ch; }
 
-  form { grid-column: 4 / 13; display: flex; flex-wrap: wrap; gap: calc(var(--unit) * 2); }
+  .stack { grid-column: span 9; display: flex; flex-direction: column; gap: calc(var(--unit) * 3); }
+  form { display: flex; flex-wrap: wrap; gap: calc(var(--unit) * 2); }
   input[type=text] {
-    flex: 1 1 240px;
+    flex: 1 1 260px;
+    min-width: 0;
     font: inherit;
     font-size: 1.5rem;
-    border: 0;
-    border-bottom: 2px solid var(--ink);
-    padding: var(--unit) 0;
-    background: transparent;
-    color: var(--ink);
+    font-weight: 700;
+    padding: calc(var(--unit) * 2);
+    border: var(--line) solid var(--ink);
     border-radius: 0;
+    background: var(--paper);
+    color: var(--ink);
   }
-  input[type=text]:focus { outline: none; border-color: var(--red); }
+  input[type=text]:focus { outline: none; background: var(--white); box-shadow: 6px 6px 0 var(--red); }
   button {
     font: inherit;
+    font-size: 1.125rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    background: var(--ink);
-    color: var(--paper);
-    border: 0;
     padding: calc(var(--unit) * 2) calc(var(--unit) * 4);
+    border: var(--line) solid var(--ink);
+    border-radius: 0;
+    background: var(--red);
+    color: var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
     cursor: pointer;
   }
-  button:hover { background: var(--red); }
+  button:hover { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--ink); }
+  button:active { transform: translate(6px, 6px); box-shadow: none; }
   .result {
-    grid-column: 4 / 13;
-    margin-top: calc(var(--unit) * 4);
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    background: var(--ink);
+    color: var(--white);
+    padding: calc(var(--unit) * 3);
+    font-size: clamp(2rem, 6vw, 4.5rem);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    word-break: break-word;
   }
 
-  footer {
-    border-top: 2px solid var(--rule);
-    padding: calc(var(--unit) * 3) 0 calc(var(--unit) * 6);
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-  footer p { grid-column: 1 / 7; }
-  footer p + p { grid-column: 7 / 13; }
+  footer .cell { grid-column: span 6; }
+  footer .cell:last-child { background: var(--ink); color: var(--white); }
 
   @media (max-width: 720px) {
-    .grid { grid-template-columns: minmax(0, 1fr); padding: 0 16px; }
-    header nav, .hero .index, .hero h1, section .label, section .body,
-    form, .result, footer p, footer p + p { grid-column: 1 / -1; }
-    header nav { margin-top: calc(var(--unit) * 2); gap: calc(var(--unit) * 3); }
-    .hero { padding: calc(var(--unit) * 6) 0; }
-    section .label { margin-bottom: calc(var(--unit) * 2); }
+    .page { margin: 0; border-left: 0; border-right: 0; }
+    .grid { grid-template-columns: minmax(0, 1fr); }
+    .grid > * { grid-column: 1 / -1 !important; }
+    .cell { border-right: 0; border-bottom: var(--line) solid var(--ink); padding: 16px; }
+    .cell:last-child { border-bottom: 0; }
+    nav { flex-wrap: wrap; }
+    .index { font-size: 2rem; }
+    .hero h1 { padding-top: 16px; }
   }
 </style>
 </head>
 <body>
-  <header>
-    <div class="grid">
-      <div class="mark" aria-hidden="true"></div>
-      <nav>
-        <a href="#about">About</a>
-        <a href="#greet">Greet</a>
-        <a href="/api/greet">API</a>
-      </nav>
-    </div>
+<div class="page">
+  <header class="grid row">
+    <div class="cell brand">MIK&#8209;GINGOS</div>
+    <div class="cell meta mono">Python / Flask<br>Est. 2026</div>
+    <nav class="cell">
+      <a href="#about">About</a>
+      <a href="#greet">Greet</a>
+      <a href="/api/greet">API</a>
+    </nav>
   </header>
 
   <main>
-    <div class="hero">
-      <div class="grid">
-        <div class="index">01</div>
-        <h1>MIK&#8209;<br>GINGOS<span>.</span></h1>
-      </div>
+    <div class="hero grid row">
+      <div class="cell index">01</div>
+      <h1 class="cell">MIK&#8209;<br>GINGOS<span>.</span></h1>
     </div>
 
-    <section id="about">
-      <div class="grid">
-        <div class="label"><b>02</b>About</div>
-        <p class="body">A small Python and Flask project. Clean grid, one typeface, one colour.</p>
-      </div>
+    <section id="about" class="grid row">
+      <div class="cell label"><b>02</b><strong>About</strong></div>
+      <div class="cell body"><p>A small Python and Flask project. Raw structure, strict grid, one typeface, one colour.</p></div>
     </section>
 
-    <section id="greet">
-      <div class="grid">
-        <div class="label"><b>03</b>Greet</div>
+    <section id="greet" class="grid row">
+      <div class="cell label"><b>03</b><strong>Greet</strong></div>
+      <div class="cell stack">
         <form method="get" action="/#greet">
-          <input type="text" name="name" placeholder="Your name"
+          <input type="text" name="name" placeholder="YOUR NAME"
                  value="{{ name if name != 'world' else '' }}" aria-label="Your name">
-          <button type="submit">Say hello</button>
+          <button type="submit">Say hello &rarr;</button>
         </form>
         <p class="result">{{ message }}</p>
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="grid">
-      <p>MIK-GINGOS</p>
-      <p>Built with Python &amp; Flask</p>
-    </div>
+  <footer class="grid">
+    <div class="cell mono">&copy; MIK-GINGOS</div>
+    <div class="cell mono">Built with Python &amp; Flask</div>
   </footer>
+</div>
 </body>
 </html>
 """
